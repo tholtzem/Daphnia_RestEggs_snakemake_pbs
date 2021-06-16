@@ -1,0 +1,1 @@
+28 zcat angsd/angsd_LC_GL2_cutoff.nInd$IND.mafs.gz | tail -n+2 | wc -l
