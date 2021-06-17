@@ -24,7 +24,7 @@ rule prepare_posFile:
     """ Prepare beagle formatted genotype likelihood file generated from ANGSD (-doGlf 2) by removing the header row and the first three columns (i.e. positions, major allele, minor allele) """
   shell:
     """
-    zcat {input}| cut -f 1,2 | sed 's/:/_/g'| gzip > {output}
+    zcat {input}| cut -f 1,2 |  awk 'NR != 1' | sed 's/:/_/g'| gzip > {output}
     """
 
 rule run_ngsLD:
