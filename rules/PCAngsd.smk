@@ -35,12 +35,12 @@ rule plot_covMat:
     covMat ='pcangsd/PCAngsd_GL2_{IND}_covmat.cov'
   output:
     pdf = 'pcangsd/PCAngsd_GL2_{IND}.pdf'
-  log: 'log/PCAngsd_GL2_{IND}.log'
+  log: 'log/PCAngsd_GL2_plotCovMat{IND}.log'
   threads: 12
   message:
     """ Estimate covariance matrix from GL using PCAngsd """
   shell:
     """
-    Rscript scripts/plot_covMat.R {input.covMat} -o {output.pdf} 2> {log}
+    Rscript scripts/plot_covMat.R {input.covMat} {output.pdf} 2> {log}
     """
 

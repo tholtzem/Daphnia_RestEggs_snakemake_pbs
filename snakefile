@@ -27,10 +27,10 @@ rule all:
                 expand('angsd/GL2_cutoffs_{IND}.done', IND=IND),
                 expand('pcangsd/PCAngsd_GL1_done'),
                 expand('pcangsd/PCAngsd_GL2_{IND}.done', IND=IND),
-                expand('pcangsd/PCAngsd_GL2_{IND}.pdf', IND=IND)
-                #expand('angsd/angsd_LC_GL1.fmt.beagle.gz'),
-                #expand('ngsLD/angsd_LC_GL1.fmt.beagle.gz'),
-                #expand('ngsLD/angsd_LC_GL1.pos.gz')
+                expand('pcangsd/PCAngsd_GL2_{IND}.pdf', IND=IND),
+                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.geno.beagle.gz'),
+                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.pos.gz'),
+                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55_10kb.ld')
 		
 # -----------------------------------------------
 
@@ -44,6 +44,6 @@ include: "rules/read_depth.smk"
 include: "rules/gencov.smk"
 include: "rules/angsd.smk"
 include: "rules/PCAngsd.smk"
-#include: "rules/ngsLD.smk"
+include: "rules/ngsLD.smk"
 #include: "rules/angsd_cutoffs.smk"
 #include: "rules/test_depth.smk"
