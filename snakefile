@@ -30,7 +30,9 @@ rule all:
                 expand('pcangsd/PCAngsd_GL2_{IND}.pdf', IND=IND),
                 expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.geno.beagle.gz'),
                 expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.pos.gz'),
-                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55_10kb.ld')
+                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.ld.gz')#,
+                #expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.unlinked')
+                
 		
 # -----------------------------------------------
 
