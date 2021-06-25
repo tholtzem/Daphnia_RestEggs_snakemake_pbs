@@ -23,3 +23,13 @@ angsd_GL:
   ncpus: 24
   mem: "240gb"
   walltime: "120:00:00"
+
+run_ngsLD:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "120:00:00"
+
+angsd_GL2_LDpruned:
+  ncpus: 24
+  mem: "240gb"
+  walltime: "120:00:00"

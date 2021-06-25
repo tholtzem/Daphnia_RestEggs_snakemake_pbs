@@ -28,12 +28,18 @@ rule all:
                 expand('pcangsd/PCAngsd_GL1_done'),
                 expand('pcangsd/PCAngsd_GL2_{IND}.done', IND=IND),
                 expand('pcangsd/PCAngsd_GL2_{IND}.pdf', IND=IND),
-                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.geno.beagle.gz'),
-                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.pos.gz'),
-                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.ld.gz')#,
-                #expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.unlinked')
+                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.sub_geno.beagle.gz'),
+                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.sub_pos.gz'),
+                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55_sub.ld.gz'),
+                #expand('ngsLD/angsd_LC_GL2_cutoff.nInd55_sub.unlinked.id'),
+                #expand('LDpruned_SNPlist.done'),
+                expand('angsd/index_SNP.done'),
+                expand('angsd/angsd_LC_GL2_LDpruned.done'),
+                expand('pcangsd/PCAngsd_GL2_LDpruned.done'),
+                expand('pcangsd/PCAngsd_GL2_LDpruned.pdf')
+
                 
-		
+	
 # -----------------------------------------------
 
 
@@ -47,5 +53,6 @@ include: "rules/gencov.smk"
 include: "rules/angsd.smk"
 include: "rules/PCAngsd.smk"
 include: "rules/ngsLD.smk"
+include: "rules/angsd_LDprunedSNPs.smk"
 #include: "rules/angsd_cutoffs.smk"
 #include: "rules/test_depth.smk"
