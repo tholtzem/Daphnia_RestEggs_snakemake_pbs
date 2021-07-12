@@ -1,46 +1,32 @@
-rule PCAngsd:
-  input:
-    'angsd/angsd_LC_GL1.beagle.gz'
-  output:
-    #'angsd/PCAngsd_covmat'
-    touch('angsd/PCAngsd_GL1_done')
-  log: 'log/PCAngsd1_covmat.log'
-  threads: 12
-  message:
-    """ Estimate covariance matrix from GL using PCAngsd """
-  shell:
-    """
-    module load pcangsd/1.01
-    pcangsd -beagle {input} -o pcangsd/PCAngsd_GL1_covmat -threads {threads} 2> {log}
-    """
 
 rule PCAngsd2:
-  input:
-    'angsd/angsd_LC_GL2_cutoff.nInd{IND}.beagle.gz'
+  input: 
+    touched = 'angsd/angsd_GL2_cutoffs_maf0018_nInd55.done'
   output:
-    touch('pcangsd/PCAngsd_GL2_{IND}.done')
-  log: 'log/PCAngsd_GL2_{IND}_covmat.log'
+    touch('pcangsd/PCAngsd_GL2_cutoffs_maf0018_nInd55.done')
+  log: 'log/PCAngsd_GL2_cutoffs_maf0018_nInd55_covmat.log'
   threads: 12
   message:
     """ Estimate covariance matrix from GL using PCAngsd """
   shell:
     """
     module load pcangsd/1.01
-    pcangsd -beagle {input} -o pcangsd/PCAngsd_GL2_{wildcards.IND}_covmat 2> {log}
+    pcangsd -beagle angsd/angsd_LC_GL2_cutoff_maf0018_nInd55.beagle.gz -o pcangsd/PCAngsd_GL2_cutoffs_maf0018_nInd55_covmat 2> {log}
     """
 
 rule plot_covMat:
   input:
-    touched = 'pcangsd/PCAngsd_GL2_{IND}.done',
-    covMat ='pcangsd/PCAngsd_GL2_{IND}_covmat.cov'
+    #touched = 'pcangsd/PCAngsd_GL2_{IND}.done',
+    #covMat ='pcangsd/PCAngsd_GL2_{IND}_covmat.cov'
+    touched = 'pcangsd/PCAngsd_GL2_cutoffs_maf0018_nInd55.done' 
   output:
-    pdf = 'pcangsd/PCAngsd_GL2_{IND}.pdf'
-  log: 'log/PCAngsd_GL2_plotCovMat{IND}.log'
+    pdf = 'pcangsd/PCAngsd_GL2_cutoffs_maf0018_nInd55_covmat.pdf'
+  log: 'log/PCAngsd_GL2_cutoffs_maf0018_plotCovMat_nInd55.log'
   threads: 12
   message:
     """ Estimate covariance matrix from GL using PCAngsd """
   shell:
     """
-    Rscript scripts/plot_covMat.R {input.covMat} {output.pdf} 2> {log}
+    Rscript scripts/plot_covMat.R pcangsd/PCAngsd_GL2_cutoffs_maf0018_nInd55_covmat.cov {output.pdf} 2> {log}
     """
 

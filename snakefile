@@ -21,22 +21,27 @@ rule all:
 		#expand('depth/{sample}.{ext}', sample=new_sample_names, ext=['minq20.realigned.bam.depth.gz']),
 		#expand('bedtools/{sample}.{ext}', sample=new_sample_names, ext=['minq20.realigned.genomecov.bed']),
 		#expand('bedtools/plots/{sample}.{ext}', sample=new_sample_names, ext=['minq20.realigned.genomecov.pdf']),
-		#expand('genome_stats.done'),
-		expand('angsd/GL1_done'),
-                expand('angsd/GL2_done'),
-                expand('angsd/GL2_cutoffs_{IND}.done', IND=IND),
-                expand('pcangsd/PCAngsd_GL1_done'),
-                expand('pcangsd/PCAngsd_GL2_{IND}.done', IND=IND),
-                expand('pcangsd/PCAngsd_GL2_{IND}.pdf', IND=IND),
-                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.sub_geno.beagle.gz'),
-                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55.sub_pos.gz'),
-                expand('ngsLD/angsd_LC_GL2_cutoff.nInd55_sub.ld.gz'),
-                #expand('ngsLD/angsd_LC_GL2_cutoff.nInd55_sub.unlinked.id'),
+		#expand('genome_stats.done'),	
+                #expand('angsd/angsd_GL2_cutoffs_maf0018_nInd55.done'),
+                #expand('pcangsd/PCAngsd_GL2_cutoffs_maf0018_nInd55.done'),
+                #expand('pcangsd/PCAngsd_GL2_cutoffs_maf0018_nInd55_covmat.pdf'),
+		#expand('ngsLD/angsd_LC_GL2_cutoff_maf0018_nInd55_sub_geno.beagle.gz'),
+                #expand('ngsLD/angsd_LC_GL2_cutoff_maf0018_nInd55_sub_pos.gz'),
+                #expand('ngsLD/angsd_LC_GL2_cutoff_maf0018_nInd55_sub.ld.gz'),
+                #expand('ngsLD/angsd_LC_GL2_cutoff_maf0018_nInd55_sub.unlinked.id'),
                 #expand('LDpruned_SNPlist.done'),
-                expand('angsd/index_SNP.done'),
-                expand('angsd/angsd_LC_GL2_LDpruned.done'),
-                expand('pcangsd/PCAngsd_GL2_LDpruned.done'),
-                expand('pcangsd/PCAngsd_GL2_LDpruned.pdf')
+                expand('list/index_SNP.done'),
+                expand('list/getChrom_from_sites.done'),
+                #expand('realigned/{sample}.{ext}', sample=new_sample_names, ext=['minq20.realigned.bam.bai']),
+                expand('angsd/angsd_LC_GL2_maf0018_LDpruned.done'),
+                expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned.done'),
+                expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned.pdf'),
+                expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned_admix_K3.done')
+
+
+                
+
+
 
                 
 	
@@ -54,5 +59,6 @@ include: "rules/angsd.smk"
 include: "rules/PCAngsd.smk"
 include: "rules/ngsLD.smk"
 include: "rules/angsd_LDprunedSNPs.smk"
+include: "rules/admix.smk"
 #include: "rules/angsd_cutoffs.smk"
 #include: "rules/test_depth.smk"

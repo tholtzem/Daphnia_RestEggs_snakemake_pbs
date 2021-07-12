@@ -19,17 +19,18 @@ map:
   mem: "240gb"
   walltime: "72:00:00"
 
-angsd_GL:
+angsd_GL2:
   ncpus: 24
   mem: "240gb"
-  walltime: "120:00:00"
+  walltime: "72:00:00"
 
 run_ngsLD:
   ncpus: 24
   mem: "240gb"
-  walltime: "120:00:00"
+  walltime: "72:00:00"
 
 angsd_GL2_LDpruned:
   ncpus: 24
   mem: "240gb"
-  walltime: "120:00:00"
+  walltime: "72:00:00"
+

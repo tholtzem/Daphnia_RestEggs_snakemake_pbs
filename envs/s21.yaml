@@ -29,13 +29,14 @@ dependencies:
   - fastqc
   - multiqc
   - bbmap=38.87-0
-  - samtools=1.12
-  - bcftools=1.12
+  - samtools
+  - htslib
+  - bcftools
   - sambamba=0.6.8
   - pixy=1.0.4.beta1
   - picard=2.25.0-0
   - bedtools=2.30.0
   - gatk=3.8 
   - bamutil=1.0.15-0
-  - angsd=0.935
-
+    #- angsd=0.935
+  - angsd=0.921
