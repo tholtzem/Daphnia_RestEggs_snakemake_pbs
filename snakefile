@@ -30,13 +30,15 @@ rule all:
                 #expand('ngsLD/angsd_LC_GL2_cutoff_maf0018_nInd55_sub.ld.gz'),
                 #expand('ngsLD/angsd_LC_GL2_cutoff_maf0018_nInd55_sub.unlinked.id'),
                 #expand('LDpruned_SNPlist.done'),
-                expand('list/index_SNP.done'),
-                expand('list/getChrom_from_sites.done'),
-                #expand('realigned/{sample}.{ext}', sample=new_sample_names, ext=['minq20.realigned.bam.bai']),
-                expand('angsd/angsd_LC_GL2_maf0018_LDpruned.done'),
-                expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned.done'),
-                expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned.pdf'),
-                expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned_admix_K3.done')
+                #expand('list/index_SNP.done'),
+                #expand('list/getChrom_from_sites.done'),
+                #expand('angsd/angsd_LC_GL2_maf0018_LDpruned.done'),
+                #expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned.done'),
+                #expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned.pdf'),
+                #expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned_admix_K3.done'),
+                expand('angsd/{sample}.GL2.saf.idx.done', sample=BAM),
+                expand('angsd/{sample}.GL2.est.ml', sample=BAM)
+                
 
 
                 
@@ -60,5 +62,6 @@ include: "rules/PCAngsd.smk"
 include: "rules/ngsLD.smk"
 include: "rules/angsd_LDprunedSNPs.smk"
 include: "rules/admix.smk"
+include: "rules/realSFS.smk"
 #include: "rules/angsd_cutoffs.smk"
 #include: "rules/test_depth.smk"

@@ -23,5 +23,5 @@ new_sample_ID = list(new_samples_information['id'])
 nInd = pd.read_csv("list/cutoff_nInd.txt", sep='\t')
 IND = list(nInd['nInd'])
 
-#test_samples = pd.read_csv("test/data/test.list")
-#test_names = list(test_samples)
+prefixBAMdepth10 = pd.read_csv("list/prefix_realignedBAM_depth10.list", sep='\t')
+BAM = list(prefixBAMdepth10['prefix'])
