@@ -37,7 +37,8 @@ rule all:
                 #expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned.pdf'),
                 #expand('pcangsd/PCAngsd_GL2_maf0018_LDpruned_admix_K3.done'),
                 expand('angsd/{sample}.GL2.saf.idx.done', sample=BAM),
-                expand('angsd/{sample}.GL2.est.ml', sample=BAM)
+                expand('angsd/{sample}.GL2.est.ml', sample=BAM),
+                expand('test_angsd935.done')
                 
 
 
@@ -63,5 +64,6 @@ include: "rules/ngsLD.smk"
 include: "rules/angsd_LDprunedSNPs.smk"
 include: "rules/admix.smk"
 include: "rules/realSFS.smk"
+include: "test_angsd.smk"
 #include: "rules/angsd_cutoffs.smk"
 #include: "rules/test_depth.smk"

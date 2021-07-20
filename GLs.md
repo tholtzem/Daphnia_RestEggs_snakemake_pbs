@@ -960,19 +960,220 @@ rule plot_covMat_LDpruned:
     """
 ```
 
-
 summary
 * angsd GL2, nInd 55, maf 0.018 all sites (angsd_LC_GL2_cutoff_maf0018_nInd55.mafs.gz: 6,430,625 sites)
 * angsd GL2, nInd 55, maf 0.018 on LD pruned data (angsd_LC_GL2_maf0018_LDpruned.mafs.gz: 907,194 sites)
 
-i position file, genome file
-* run_ngsLD
-* run prune.pl on local computer (doesnt work on mach2)
+
+Results PCA: Principal-component analysis (PCA) showed three distinct genetic groups matching our reference clonal lines from extant populations D. longispina (blue), D. galeata (orange), D. cucullata (green). PC1 vs PC2 shows that all resting egg samples lie in between D. longispina and D. galeata. 
+
+## Infer admixture proportions using PCAngsd
+
+```
+rule PCAngsd_admix:
+  input:
+    'angsd/angsd_LC_GL2_maf0018_LDpruned.done'
+  output:
+    touch('pcangsd/PCAngsd_GL2_maf0018_LDpruned_admix_K3.done')
+  log: 'log/PCAngsd_GL2_maf0018_LDpruned_admix_K3.log'
+  threads: 12 
+  message:
+    """ Infer admixture proportions using PCAngsd """
+  shell:
+    """
+    module load pcangsd/1.01
+    pcangsd -beagle angsd/angsd_LC_GL2_maf0018_LDpruned.beagle.gz -admix -admix_K 3 -o pcangsd/PCAngsd_GL2_maf0018_LDpruned_admix_K3 2> {log}
+    """
+```
+
+### plot admixture proportions usinfg Rscript
+
+```
+
+setwd("/mnt/data/snakemake_mach2/Daphnia_RestEggs_snakemake_pbs/")
+
+#Load the covariance matrix
+admix = npyLoad("pcangsd/PCAngsd_GL2_maf0018_LDpruned_admix_K3.admix.3.Q.npy")
+admix
+
+#We will also add a column with population assingments
+sample_data <- read.csv("list/metadata_RESTEGGS_LC_OLDvsNEW_badOUT.csv", header = T, sep='\t')
+sample_data$sample_id
+sample_data$species
+
+# pops
+pop <- as.vector(sample_data$species)
+pop
+
+# IDs
+ID <- as.vector(sample_data$sample_id)
+ID
 
 
-Principal-component analysis (PCA) showed three distinct genetic groups matching our reference clonal lines from extant populations D. longispina (blue), D. galeata (orange), D. cucullata (green). PC1 vs PC2 shows that all resting egg samples lie in between D. longispina and D. galeata. 
+
+admix.id = as.data.frame(cbind(pop, ID, admix))
+names(admix.id) = c("pop","ID","longispina","galeata","cucullata")
+
+
+# Colour palette with black:
+#cbp2 <- c("#009E73", "#000000", "#D55E00", "#56B4E9", "#E69F00", "#F0E442", "#0072B2", "#CC79A7")
+# 
+pdf("pcangsd/PCangsd_admix_LDpruned_K3_plot.pdf")
+par(mar = c(5,4,4,2))
+barplot(t(as.matrix(subset(admix.id, select=longispina:cucullata))), col=c("#56B4E9","#D55E00","#009E73"), names=ID, border=NA, las=2, cex.names = 0.5, xlab = "Individuals", ylab = "Ancestry", main = "K3")
+dev.off()
+
+jpeg("pcangsd/PCangsd_admix_LDpruned_K3_plot.jpg", height = 431, width = 1057)
+par(mar = c(5,4,4,2))
+barplot(t(as.matrix(subset(admix.id, select=longispina:cucullata))), col=c("#56B4E9","#D55E00","#009E73"), names=ID, border=NA, las=2, cex.names = 0.5, xlab = "Individuals", ylab = "Ancestry", main = "K3")
+dev.off()
+
+png("pop_stats/PCangsd_admix_LDpruned_K3_plot.png", width = 6, height = 6, units = 'in', res = 300)
+par(mar = c(5,4,4,6))
+
+barplot(t(as.matrix(subset(admix.id, select=longispina:cucullata))), legend.text = TRUE, args.legend = list(x="right", inset= c(-0.25,0), cex=0.8), col=c("#56B4E9","#D55E00","#009E73"), names=ID, border=NA, las=2, cex.names = 0.5, xlab = "Individuals", ylab = "Ancestry", main = "K3")
+dev.off()
+
+```
+
+## Calculate heterozygosity per sample using SFS estimation in angsd
+
+```
+rule angsd_saf:
+  input:
+    ref = config["ref"],
+    realigned = 'realigned/{sample}.minq20.realigned.bam'
+  output:
+    touch('angsd/{sample}.GL2.saf.idx.done')
+  log:
+    'log/{sample}.GL2.saf.log'
+  threads: 24
+  message:
+    """ SFS Estimation for single samples - part1 """
+  shell:
+    """
+    angsd -i {input.realigned} -out angsd/{wildcards.sample}.GL2 -anc {input.ref} -dosaf 1 -fold 1 -ref {input.ref} -C 50 -minQ 20 -minMapQ 30 -GL 2 2> {log}
+    """
+```
+
+```
+rule real_SFS:
+  input:
+    'angsd/{sample}.GL2.saf.idx.done'
+  output:
+    'angsd/{sample}.GL2.est.ml'
+  log:
+    'log/{sample}.GL2.est.ml.log'
+  threads: 24
+  message:
+    """ SFS Estimation for single samples - part1 """
+  shell:
+    """
+    path=(/home/uibk/c7701178/.conda/envs/eggs/bin/)
+    $path/realSFS angsd/{wildcards.sample}.GL2.saf.idx > {output} 2> {log}
+    """
+```
+
+```
+rule plotHeterozygosity:
+  input: 'angsd/{sample}.GL2.est.ml'
+  output:
+    'angsd/{sample}.GL2.heterozygosity.txt'
+  log:
+    'log/{sample}.GL2.heterozygosity.log'
+  message:
+    """ plot heterozygosity """
+  shell:
+    """
+   Rscript scripts/plotHeterozygosity.R {input} {output} 2> {log}
+    """
+```
+
+Rscript to plot heterozygosity
+
+
+```
+#library(tidyverse) #load the tidyverse package for formatting and plotting
+library(viridis)
+library(plyr)
+library(readr)
+library(ggplot2)
+
+#In this script we will plot heterozygosity computed by angsd using the -doSaf with the reference genome providing the ancestral state.
+#This was achieved by dividing the number of heterozygous sites (the second entry in the SFS)
+#by the total number of sites (first entry + second entry in the SFS)
+#to obtain the proportion of heterozygous sites for each genome.
+
+
+setwd("/mnt/data/snakemake_mach2/Daphnia_RestEggs_snakemake_pbs/")
+
+#args <- commandArgs(trailingOnly=TRUE)
+
+# population assingments
+sample_data <- read.csv("list/metadata_RESTEGGS_LC_OLDvsNEW_badOUT.csv", header = T, sep='\t')
+sample_data$sample_id
+sample_data$species
+
+# species
+species <- as.vector(sample_data$species)
+species
+
+# IDs
+ID <- as.vector(sample_data$sample_id)
+ID
+
+
+basedir <- "angsd" # Make sure to edit this to match your $BASEDIR
+bam_list <- list.files(path = basedir, pattern = "*est.ml", full.names = TRUE)
+
+bam_list
 
 
 
+data_tsv = ldply(bam_list, scan)
+
+# total number of sites
+totalNR_sites <- (data_tsv$V1 + data_tsv$V2)
+totalNR_sites
+
+# number of homozygote sites
+NR_HOMsites <- data_tsv[1]
+
+# number of heterozygote sites
+NR_HETsites <- data_tsv[2]
+NR_HETsites
+
+# individual heterozygosity
+IND_heterozygosity <- (NR_HETsites/totalNR_sites)
+
+output <- cbind(ID, species, NR_HOMsites, NR_HETsites, IND_heterozygosity)
+output
+
+names(output) = c("ID", "species", "NR_HOMsites", "NR_HETsites", "IND_heterozygosity")
+options(scipen = 100)
+write.table(output,"pop_stats/heterozygosity_angsd.txt", sep ="\t", quote = F)
+
+
+# plot bar charts of heterozygosity estimates
+
+barplot(t(as.matrix(output$IND_heterozygosity)), names=output$ID, border=NA, las=2, cex.names = 0.5, cex.axis = 0.8, xlab = "Individuals", ylab = "Heterozygosity")
+
+
+png("pop_stats/heterozygosity_angsd.png", width = 4, height = 4, units = 'in', res = 300)
+# barplot
+p<-ggplot(data=output, aes(x=ID, y=IND_heterozygosity, color=species, fill=species, label=ID))+
+  geom_bar(stat="identity", width=0.5)+
+    theme(axis.text = element_text(size = 6))+
+      scale_color_manual(values=c("#009E73", "#000000", "#D55E00", "#56B4E9"))
+      p2 <- p + scale_fill_manual(values=c("#009E73", "#000000", "#D55E00", "#56B4E9"))+
+        xlab("Indiviuals")+
+	  ylab("Heterozygosity")+
+	    coord_flip()
+	    p2 + theme(panel.background = element_blank(), axis.line = element_line(colour = "grey"))+
+	      scale_y_continuous(expand = c(0,0)) + scale_x_discrete(expand = c(0,0))
+	      dev.off()
+
+
+```
 
 
